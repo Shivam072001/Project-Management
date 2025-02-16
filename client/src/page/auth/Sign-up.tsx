@@ -77,7 +77,7 @@ const SignUp = () => {
           to="/"
           className="flex items-center gap-2 self-center font-medium"
         >
-          <Logo />
+          <Logo linkWrapper={false} />
           Team Sync.
         </Link>
         <div className="flex flex-col gap-6">

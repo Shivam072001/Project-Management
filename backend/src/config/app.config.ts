@@ -1,6 +1,20 @@
 import { getEnv } from "../utils/get-env";
 
-const appConfig = () => ({
+interface AppConfig {
+  NODE_ENV: string;
+  PORT: string;
+  BASE_PATH: string;
+  MONGO_URI: string;
+  SESSION_SECRET: string;
+  SESSION_EXPIRES_IN: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  GOOGLE_CALLBACK_URL: string;
+  FRONTEND_ORIGIN: string;
+  FRONTEND_GOOGLE_CALLBACK_URL: string;
+}
+
+const appConfig = (): AppConfig => ({
   NODE_ENV: getEnv("NODE_ENV", "development"),
   PORT: getEnv("PORT", "5000"),
   BASE_PATH: getEnv("BASE_PATH", "/api"),
