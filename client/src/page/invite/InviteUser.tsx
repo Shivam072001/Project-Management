@@ -1,23 +1,18 @@
 import { Loader } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { BASE_ROUTE } from "@/routes/common/routePaths";
 import useAuth from "@/hooks/api/use-auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { invitedUserJoinWorkspaceMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const InviteUser = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const param = useParams();
   const inviteCode = param.inviteCode as string;
@@ -30,7 +25,7 @@ const InviteUser = () => {
   });
 
   const returnUrl = encodeURIComponent(
-    `${BASE_ROUTE.INVITE_URL.replace(":inviteCode", inviteCode)}`
+    `${BASE_ROUTE.INVITE_URL.replace(":inviteCode", inviteCode)}`,
   );
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
@@ -55,10 +50,7 @@ const InviteUser = () => {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-md flex-col gap-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2 self-center font-medium"
-        >
+        <Link to="/" className="flex items-center gap-2 self-center font-medium">
           <Logo linkWrapper={false} />
           Team Sync.
         </Link>
@@ -69,8 +61,7 @@ const InviteUser = () => {
                 Hey there! You're invited to join a TeamSync Workspace!
               </CardTitle>
               <CardDescription>
-                Looks like you need to be logged into your TeamSync account to
-                join this Workspace.
+                Looks like you need to be logged into your TeamSync account to join this Workspace.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -86,9 +77,7 @@ const InviteUser = () => {
                           disabled={isLoading}
                           className="!bg-green-500 !text-white text-[23px] !h-auto"
                         >
-                          {isLoading && (
-                            <Loader className="!w-6 !h-6 animate-spin" />
-                          )}
+                          {isLoading && <Loader className="!w-6 !h-6 animate-spin" />}
                           Join the Workspace
                         </Button>
                       </form>
@@ -101,10 +90,7 @@ const InviteUser = () => {
                       >
                         <Button className="w-full">Signup</Button>
                       </Link>
-                      <Link
-                        className="flex-1 w-full text-base"
-                        to={`/?returnUrl=${returnUrl}`}
-                      >
+                      <Link className="flex-1 w-full text-base" to={`/?returnUrl=${returnUrl}`}>
                         <Button variant="secondary" className="w-full border">
                           Login
                         </Button>

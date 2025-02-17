@@ -3,13 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,13 +17,15 @@ import Logo from "@/components/logo";
 import GoogleOauthButton from "@/components/auth/google-oauth-button";
 import { useMutation } from "@tanstack/react-query";
 import { loginMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get("returnUrl");
+  const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
     mutationFn: loginMutationFn,
@@ -58,7 +54,7 @@ const SignIn = () => {
     mutate(values, {
       onSuccess: (data) => {
         const user = data.user;
-        console.log(user);
+        logger.debug("user: ", user);
         const decodedUrl = returnUrl ? decodeURIComponent(returnUrl) : null;
         navigate(decodedUrl || `/workspace/${user.currentWorkspace}`);
       },
@@ -75,10 +71,7 @@ const SignIn = () => {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2 self-center font-medium"
-        >
+        <Link to="/" className="flex items-center gap-2 self-center font-medium">
           <Logo linkWrapper={false} />
           Team Sync.
         </Link>
@@ -86,9 +79,7 @@ const SignIn = () => {
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">Welcome back</CardTitle>
-              <CardDescription>
-                Login with your Email or Google account
-              </CardDescription>
+              <CardDescription>Login with your Email or Google account</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -109,9 +100,7 @@ const SignIn = () => {
                           name="email"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                                Email
-                              </FormLabel>
+                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">Email</FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="m@example.com"
@@ -143,11 +132,7 @@ const SignIn = () => {
                                 </a>
                               </div>
                               <FormControl>
-                                <Input
-                                  type="password"
-                                  className="!h-[48px]"
-                                  {...field}
-                                />
+                                <Input type="password" className="!h-[48px]" {...field} />
                               </FormControl>
 
                               <FormMessage />
@@ -155,21 +140,14 @@ const SignIn = () => {
                           )}
                         />
                       </div>
-                      <Button
-                        disabled={isPending}
-                        type="submit"
-                        className="w-full"
-                      >
+                      <Button disabled={isPending} type="submit" className="w-full">
                         {isPending && <Loader className="animate-spin" />}
                         Login
                       </Button>
                     </div>
                     <div className="text-center text-sm">
                       Don&apos;t have an account?{" "}
-                      <Link
-                        to="/sign-up"
-                        className="underline underline-offset-4"
-                      >
+                      <Link to="/sign-up" className="underline underline-offset-4">
                         Sign up
                       </Link>
                     </div>
@@ -179,8 +157,8 @@ const SignIn = () => {
             </CardContent>
           </Card>
           <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-            By clicking continue, you agree to our{" "}
-            <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            By clicking continue, you agree to our <a href="#">Terms of Service</a> and{" "}
+            <a href="#">Privacy Policy</a>.
           </div>
         </div>
       </div>

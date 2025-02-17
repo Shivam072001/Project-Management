@@ -3,7 +3,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.middleware";
 import { createTaskSchema, taskIdSchema, updateTaskSchema } from "../validation/task.validation";
 import { projectIdSchema } from "../validation/project.validation";
 import { workspaceIdSchema } from "../validation/workspace.validation";
-import { Permissions } from "../enums/role.enum";
+import { Permissions, RoleType } from "../enums/role.enum";
 import { getMemberRoleInWorkspace } from "../services/member.service";
 import { roleGuard } from "../utils/roleGuard";
 import {
@@ -14,9 +14,10 @@ import {
   updateTaskService,
 } from "../services/task.service";
 import { HTTPSTATUS } from "../config/http.config";
+import { TaskDocument } from "@/models/task.model";
 
 export const createTaskController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const body = createTaskSchema.parse(req.body);
   const sanitizedBody: {
@@ -38,10 +39,12 @@ export const createTaskController = asyncHandler(async (req: Request, res: Respo
   const projectId = projectIdSchema.parse(req.params.projectId);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.CREATE_TASK]);
 
-  const { task } = await createTaskService(workspaceId, projectId, userId, sanitizedBody);
+  const { task } = (await createTaskService(workspaceId, projectId, userId, sanitizedBody)) as {
+    task: TaskDocument;
+  };
 
   return res.status(HTTPSTATUS.OK).json({
     message: "Task created successfully",
@@ -50,7 +53,7 @@ export const createTaskController = asyncHandler(async (req: Request, res: Respo
 });
 
 export const updateTaskController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const body = updateTaskSchema.parse(req.body);
   const sanitizedBody = {
@@ -65,10 +68,15 @@ export const updateTaskController = asyncHandler(async (req: Request, res: Respo
   const projectId = projectIdSchema.parse(req.params.projectId);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.EDIT_TASK]);
 
-  const { updatedTask } = await updateTaskService(workspaceId, projectId, taskId, sanitizedBody);
+  const { updatedTask } = (await updateTaskService(
+    workspaceId,
+    projectId,
+    taskId,
+    sanitizedBody
+  )) as { updatedTask: TaskDocument };
 
   return res.status(HTTPSTATUS.OK).json({
     message: "Task updated successfully",
@@ -77,7 +85,7 @@ export const updateTaskController = asyncHandler(async (req: Request, res: Respo
 });
 
 export const getAllTasksController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
@@ -96,25 +104,25 @@ export const getAllTasksController = asyncHandler(async (req: Request, res: Resp
     pageNumber: parseInt(req.query.pageNumber as string) || 1,
   };
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.VIEW_ONLY]);
 
   const result = await getAllTasksService(workspaceId, filters, pagination);
 
   return res.status(HTTPSTATUS.OK).json({
     message: "All tasks fetched successfully",
-    ...result,
+    ...(result as { tasks: TaskDocument[]; totalCount: number; totalPages: number; skip: number }),
   });
 });
 
 export const getTaskByIdController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const taskId = taskIdSchema.parse(req.params.id);
   const projectId = projectIdSchema.parse(req.params.projectId);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.VIEW_ONLY]);
 
   const task = await getTaskByIdService(workspaceId, projectId, taskId);
@@ -126,12 +134,12 @@ export const getTaskByIdController = asyncHandler(async (req: Request, res: Resp
 });
 
 export const deleteTaskController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const taskId = taskIdSchema.parse(req.params.id);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.DELETE_TASK]);
 
   await deleteTaskService(workspaceId, taskId);

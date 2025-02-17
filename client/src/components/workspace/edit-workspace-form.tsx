@@ -17,12 +17,13 @@ import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editWorkspaceMutationFn } from "@/lib/api";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
 import { Permissions } from "@/constant";
 
 export default function EditWorkspaceForm() {
   const { workspace, hasPermission } = useAuthContext();
+  const { toast } = useToast();
   const canEditWorkspace = hasPermission(Permissions.EDIT_WORKSPACE);
 
   const queryClient = useQueryClient();
@@ -98,9 +99,7 @@ export default function EditWorkspaceForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                      Workspace name
-                    </FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Workspace name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Taco's Co."
@@ -122,9 +121,7 @@ export default function EditWorkspaceForm() {
                   <FormItem>
                     <FormLabel className="dark:text-[#f1f7feb5] text-sm">
                       Workspace description
-                      <span className="text-xs font-extralight ml-2">
-                        Optional
-                      </span>
+                      <span className="text-xs font-extralight ml-2">Optional</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea

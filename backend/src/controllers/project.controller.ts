@@ -8,7 +8,7 @@ import {
 import { workspaceIdSchema } from "../validation/workspace.validation";
 import { getMemberRoleInWorkspace } from "../services/member.service";
 import { roleGuard } from "../utils/roleGuard";
-import { Permissions } from "../enums/role.enum";
+import { Permissions, RoleType } from "../enums/role.enum";
 import {
   createProjectService,
   deleteProjectService,
@@ -18,20 +18,22 @@ import {
   updateProjectService,
 } from "../services/project.service";
 import { HTTPSTATUS } from "../config/http.config";
+import { ProjectDocument } from "@/models/project.model";
+import { AnalyticsType } from "@/models/workspace.model";
 
 export const createProjectController = asyncHandler(async (req: Request, res: Response) => {
   const body = createProjectSchema.parse(req.body);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const userId = req.user?._id;
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const userId = req.user?._id as string;
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.CREATE_PROJECT]);
 
-  const { project } = await createProjectService(userId, workspaceId, {
+  const { project } = (await createProjectService(userId, workspaceId, {
     name: body.name,
     ...(body.emoji ? { emoji: body.emoji } : {}),
     ...(body.description ? { description: body.description } : {}),
-  });
+  })) as { project: ProjectDocument };
 
   return res.status(HTTPSTATUS.CREATED).json({
     message: "Project created successfully",
@@ -42,19 +44,24 @@ export const createProjectController = asyncHandler(async (req: Request, res: Re
 export const getAllProjectsInWorkspaceController = asyncHandler(
   async (req: Request, res: Response) => {
     const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
-    const userId = req.user?._id;
+    const userId = req.user?._id as string;
 
-    const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+    const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
     roleGuard(role, [Permissions.VIEW_ONLY]);
 
     const pageSize = parseInt(req.query.pageSize as string) || 10;
     const pageNumber = parseInt(req.query.pageNumber as string) || 1;
 
-    const { projects, totalCount, totalPages, skip } = await getProjectsInWorkspaceService(
+    const { projects, totalCount, totalPages, skip } = (await getProjectsInWorkspaceService(
       workspaceId,
       pageSize,
       pageNumber
-    );
+    )) as {
+      projects: ProjectDocument[];
+      totalCount: number;
+      totalPages: number;
+      skip: number;
+    };
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Project fetched successfully",
@@ -76,12 +83,15 @@ export const getProjectByIdAndWorkspaceIdController = asyncHandler(
     const projectId = projectIdSchema.parse(req.params.id);
     const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-    const userId = req.user?._id;
+    const userId = req.user?._id as string;
 
-    const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+    const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
     roleGuard(role, [Permissions.VIEW_ONLY]);
 
-    const { project } = await getProjectByIdAndWorkspaceIdService(workspaceId, projectId);
+    const { project } = (await getProjectByIdAndWorkspaceIdService(
+      workspaceId,
+      projectId
+    )) as { project: ProjectDocument };
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Project fetched successfully",
@@ -94,12 +104,14 @@ export const getProjectAnalyticsController = asyncHandler(async (req: Request, r
   const projectId = projectIdSchema.parse(req.params.id);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.VIEW_ONLY]);
 
-  const { analytics } = await getProjectAnalyticsService(workspaceId, projectId);
+  const { analytics } = (await getProjectAnalyticsService(workspaceId, projectId)) as {
+    analytics: AnalyticsType;
+  };
 
   return res.status(HTTPSTATUS.OK).json({
     message: "Project analytics retrieved successfully",
@@ -108,21 +120,21 @@ export const getProjectAnalyticsController = asyncHandler(async (req: Request, r
 });
 
 export const updateProjectController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const projectId = projectIdSchema.parse(req.params.id);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
   const body = updateProjectSchema.parse(req.body);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.EDIT_PROJECT]);
 
-  const { project } = await updateProjectService(workspaceId, projectId, {
+  const { project } = (await updateProjectService(workspaceId, projectId, {
     name: body.name,
     ...(body.emoji ? { emoji: body.emoji } : {}),
     ...(body.description ? { description: body.description } : {}),
-  });
+  })) as { project: ProjectDocument };
 
   return res.status(HTTPSTATUS.OK).json({
     message: "Project updated successfully",
@@ -131,12 +143,12 @@ export const updateProjectController = asyncHandler(async (req: Request, res: Re
 });
 
 export const deleteProjectController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?._id as string;
 
   const projectId = projectIdSchema.parse(req.params.id);
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-  const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
+  const { role } = (await getMemberRoleInWorkspace(userId, workspaceId)) as { role: RoleType };
   roleGuard(role, [Permissions.DELETE_PROJECT]);
 
   await deleteProjectService(workspaceId, projectId);

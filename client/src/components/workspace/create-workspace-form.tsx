@@ -16,15 +16,12 @@ import { Textarea } from "../ui/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createWorkspaceMutationFn } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
 
-export default function CreateWorkspaceForm({
-  onClose,
-}: {
-  onClose: () => void;
-}) {
+export default function CreateWorkspaceForm({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const queryClient = useQueryClient();
 
@@ -80,8 +77,8 @@ export default function CreateWorkspaceForm({
             Let's build a Workspace
           </h1>
           <p className="text-muted-foreground text-lg leading-tight">
-            Boost your productivity by making it easier for everyone to access
-            projects in one location.
+            Boost your productivity by making it easier for everyone to access projects in one
+            location.
           </p>
         </div>
         <Form {...form}>
@@ -92,15 +89,9 @@ export default function CreateWorkspaceForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                      Workspace name
-                    </FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Workspace name</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Taco's Co."
-                        className="!h-[48px]"
-                        {...field}
-                      />
+                      <Input placeholder="Taco's Co." className="!h-[48px]" {...field} />
                     </FormControl>
                     <FormDescription>
                       This is the name of your company, team or organization.
@@ -118,9 +109,7 @@ export default function CreateWorkspaceForm({
                   <FormItem>
                     <FormLabel className="dark:text-[#f1f7feb5] text-sm">
                       Workspace description
-                      <span className="text-xs font-extralight ml-2">
-                        Optional
-                      </span>
+                      <span className="text-xs font-extralight ml-2">Optional</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -130,8 +119,7 @@ export default function CreateWorkspaceForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      Get your members on board with a few words about your
-                      Workspace.
+                      Get your members on board with a few words about your Workspace.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

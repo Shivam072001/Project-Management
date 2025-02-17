@@ -16,7 +16,7 @@ import { TaskType } from "@/types/api.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { deleteTaskMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface DataTableRowActionsProps {
   row: Row<TaskType>;
@@ -26,6 +26,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [openDeleteDialog, setOpenDialog] = useState(false);
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
+  const { toast } = useToast();
 
   const { mutate, isPending } = useMutation({
     mutationFn: deleteTaskMutationFn,
@@ -59,7 +60,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             variant: "destructive",
           });
         },
-      }
+      },
     );
   };
 
@@ -67,18 +68,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-          >
+          <Button variant="ghost" className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
             <MoreHorizontal />
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem className="cursor-pointer">
-            Edit Task
-          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">Edit Task</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className={`!text-destructive cursor-pointer ${taskId}`}
