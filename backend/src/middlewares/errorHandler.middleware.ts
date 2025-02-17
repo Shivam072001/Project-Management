@@ -3,8 +3,9 @@ import { HTTPSTATUS } from "../config/http.config";
 import { AppError } from "../utils/appError";
 import { z, ZodError } from "zod";
 import { ErrorCodeEnum } from "../enums/error-code.enum";
+import { logger } from "../utils/logger";
 
-const formatZodError = (res: Response, error: z.ZodError) => {
+const formatZodError = (res: Response, error: z.ZodError): Response => {
   const errors = error?.issues?.map((err) => ({
     field: err.path.join("."),
     message: err.message,
@@ -16,13 +17,8 @@ const formatZodError = (res: Response, error: z.ZodError) => {
   });
 };
 
-export const errorHandler: ErrorRequestHandler = (
-  error,
-  req,
-  res,
-  next
-): any => {
-  console.error(`Error Occured on PATH: ${req.path} `, error);
+export const errorHandler: ErrorRequestHandler = (error, req, res, _next): any => {
+  logger.error(`Error Occured on PATH: ${req.path} `, error);
 
   if (error instanceof SyntaxError) {
     return res.status(HTTPSTATUS.BAD_REQUEST).json({

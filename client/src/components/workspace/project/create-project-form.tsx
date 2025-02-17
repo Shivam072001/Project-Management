@@ -13,27 +13,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../../ui/textarea";
 import EmojiPickerComponent from "@/components/emoji-picker";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createProjectMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
 
-export default function CreateProjectForm({
-  onClose,
-}: {
-  onClose: () => void;
-}) {
+export default function CreateProjectForm({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
+  const { toast } = useToast();
 
   const [emoji, setEmoji] = useState("📊");
 
@@ -112,9 +105,7 @@ export default function CreateProjectForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Select Emoji
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Select Emoji</label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -135,15 +126,9 @@ export default function CreateProjectForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                      Project title
-                    </FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Project title</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Website Redesign"
-                        className="!h-[48px]"
-                        {...field}
-                      />
+                      <Input placeholder="Website Redesign" className="!h-[48px]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -158,16 +143,10 @@ export default function CreateProjectForm({
                   <FormItem>
                     <FormLabel className="dark:text-[#f1f7feb5] text-sm">
                       Project description
-                      <span className="text-xs font-extralight ml-2">
-                        Optional
-                      </span>
+                      <span className="text-xs font-extralight ml-2">Optional</span>
                     </FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={4}
-                        placeholder="Projects description"
-                        {...field}
-                      />
+                      <Textarea rows={4} placeholder="Projects description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

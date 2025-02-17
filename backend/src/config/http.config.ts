@@ -1,4 +1,27 @@
-const httpConfig = () => ({
+interface HttpConfigType {
+  // Success responses
+  OK: number;
+  CREATED: number;
+  ACCEPTED: number;
+  NO_CONTENT: number;
+  // Client error responses
+  BAD_REQUEST: number;
+  UNAUTHORIZED: number;
+  FORBIDDEN: number;
+  NOT_FOUND: number;
+  METHOD_NOT_ALLOWED: number;
+  CONFLICT: number;
+  UNPROCESSABLE_ENTITY: number;
+  TOO_MANY_REQUESTS: number;
+  // Server error responses
+  INTERNAL_SERVER_ERROR: number;
+  NOT_IMPLEMENTED: number;
+  BAD_GATEWAY: number;
+  SERVICE_UNAVAILABLE: number;
+  GATEWAY_TIMEOUT: number;
+}
+
+const httpConfig = (): HttpConfigType => ({
   // Success responses
   OK: 200,
   CREATED: 201,
