@@ -1,6 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { generateInviteCode } from "../utils/uuid";
 
+export type AnalyticsType = {
+  totalTasks: number;
+  overdueTasks: number;
+  completedTasks: number;
+};
+
 export interface WorkspaceDocument extends Document {
   name: string;
   description: string;
@@ -35,9 +41,6 @@ workspaceSchema.methods.resetInviteCode = function () {
   this.inviteCode = generateInviteCode();
 };
 
-const WorkspaceModel = mongoose.model<WorkspaceDocument>(
-  "Workspace",
-  workspaceSchema
-);
+const WorkspaceModel = mongoose.model<WorkspaceDocument>("Workspace", workspaceSchema);
 
 export default WorkspaceModel;

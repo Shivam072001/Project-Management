@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Permissions } from "@/constant";
 import { useAuthContext } from "@/context/auth-provider";
 import useConfirmDialog from "@/hooks/use-confirm-dialog";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { deleteWorkspaceMutationFn } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 const DeleteWorkspaceCard = () => {
   const { workspace } = useAuthContext();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
@@ -53,17 +54,13 @@ const DeleteWorkspaceCard = () => {
           </h1>
         </div>
 
-        <PermissionsGuard
-          showMessage
-          requiredPermission={Permissions.DELETE_WORKSPACE}
-        >
+        <PermissionsGuard showMessage requiredPermission={Permissions.DELETE_WORKSPACE}>
           <div className="flex flex-col items-start justify-between py-0">
             <div className="flex-1 mb-2">
               <p>
-                Deleting a workspace is a permanent action and cannot be undone.
-                Once you delete a workspace, all its associated data, including
-                projects, tasks, and member roles, will be permanently removed.
-                Please proceed with caution and ensure this action is
+                Deleting a workspace is a permanent action and cannot be undone. Once you delete a
+                workspace, all its associated data, including projects, tasks, and member roles,
+                will be permanently removed. Please proceed with caution and ensure this action is
                 intentional.
               </p>
             </div>

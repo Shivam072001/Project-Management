@@ -1,11 +1,4 @@
-import {
-  ArrowRight,
-  Folder,
-  Loader,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ArrowRight, Folder, Loader, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -35,12 +28,13 @@ import useGetProjectsInWorkspaceQuery from "@/hooks/api/use-get-projects";
 import { PaginationType } from "@/types/api.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProjectMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function NavProjects() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+  const { toast } = useToast();
 
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
@@ -56,12 +50,11 @@ export function NavProjects() {
     mutationFn: deleteProjectMutationFn,
   });
 
-  const { data, isPending, isFetching, isError } =
-    useGetProjectsInWorkspaceQuery({
-      workspaceId,
-      pageSize,
-      pageNumber,
-    });
+  const { data, isPending, isFetching, isError } = useGetProjectsInWorkspaceQuery({
+    workspaceId,
+    pageSize,
+    pageNumber,
+  });
 
   const projects = data?.projects || [];
   const pagination = data?.pagination || ({} as PaginationType);
@@ -100,7 +93,7 @@ export function NavProjects() {
             variant: "destructive",
           });
         },
-      }
+      },
     );
   };
   return (
@@ -132,8 +125,7 @@ export function NavProjects() {
           {!isPending && projects?.length === 0 ? (
             <div className="pl-3">
               <p className="text-xs text-muted-foreground">
-                There is no projects in this Workspace yet. Projects you create
-                will show up here.
+                There is no projects in this Workspace yet. Projects you create will show up here.
               </p>
               <PermissionsGuard requiredPermission={Permissions.CREATE_PROJECT}>
                 <Button
@@ -171,21 +163,14 @@ export function NavProjects() {
                       side={isMobile ? "bottom" : "right"}
                       align={isMobile ? "end" : "start"}
                     >
-                      <DropdownMenuItem
-                        onClick={() => navigate(`${projectUrl}`)}
-                      >
+                      <DropdownMenuItem onClick={() => navigate(`${projectUrl}`)}>
                         <Folder className="text-muted-foreground" />
                         <span>View Project</span>
                       </DropdownMenuItem>
 
-                      <PermissionsGuard
-                        requiredPermission={Permissions.DELETE_PROJECT}
-                      >
+                      <PermissionsGuard requiredPermission={Permissions.DELETE_PROJECT}>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          disabled={isLoading}
-                          onClick={() => onOpenDialog(item)}
-                        >
+                        <DropdownMenuItem disabled={isLoading} onClick={() => onOpenDialog(item)}>
                           <Trash2 className="text-muted-foreground" />
                           <span>Delete Project</span>
                         </DropdownMenuItem>

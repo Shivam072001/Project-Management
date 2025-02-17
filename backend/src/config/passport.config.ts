@@ -6,10 +6,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { config } from "./app.config";
 import { NotFoundException } from "../utils/appError";
 import { ProviderEnum } from "../enums/account-provider.enum";
-import {
-  loginOrCreateAccountService,
-  verifyUserService,
-} from "../services/auth.service";
+import { loginOrCreateAccountService, verifyUserService } from "../services/auth.service";
+import type { UserDocument } from "../models/user.model";
 
 passport.use(
   new GoogleStrategy(
@@ -20,25 +18,23 @@ passport.use(
       scope: ["profile", "email"],
       passReqToCallback: true,
     },
-    async (req: Request, accessToken, refreshToken, profile, done) => {
+    async (_req: Request, _accessToken, _refreshToken, profile, done) => {
       try {
         const { email, sub: googleId, picture } = profile._json;
-        console.log(profile, "profile");
-        console.log(googleId, "googleId");
         if (!googleId) {
           throw new NotFoundException("Google ID (sub) is missing");
         }
 
-        const { user } = await loginOrCreateAccountService({
+        const { user } = (await loginOrCreateAccountService({
           provider: ProviderEnum.GOOGLE,
           displayName: profile.displayName,
           providerId: googleId,
-          picture: picture,
-          email: email,
-        });
+          ...(picture && { picture }),
+          ...(email && { email }),
+        })) as { user: UserDocument };
         done(null, user);
       } catch (error) {
-        done(error, false);
+        done(error instanceof Error ? error : new Error("Authentication failed"), false);
       }
     }
   )
@@ -53,14 +49,15 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const user = await verifyUserService({ email, password });
+        const user = (await verifyUserService({ email, password })) as UserDocument;
         return done(null, user);
-      } catch (error: any) {
-        return done(error, false, { message: error?.message });
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+        return done(error, false, { message: errorMessage });
       }
     }
   )
 );
 
-passport.serializeUser((user: any, done) => done(null, user));
-passport.deserializeUser((user: any, done) => done(null, user));
+passport.serializeUser((user: UserDocument, done) => done(null, user));
+passport.deserializeUser((user: UserDocument, done) => done(null, user));

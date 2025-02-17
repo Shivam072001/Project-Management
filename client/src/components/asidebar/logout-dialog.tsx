@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 
@@ -20,6 +20,7 @@ const LogoutDialog = (props: {
 }) => {
   const { isOpen, setIsOpen } = props;
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const queryClient = useQueryClient();
 
@@ -53,9 +54,9 @@ const LogoutDialog = (props: {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to log out?</DialogTitle>
-            <DialogDescription>
-              This will end your current session and you will need to log in
-              again to access your account.
+            <DialogDescription className="sr-only">
+              This will end your current session and you will need to log in again to access your
+              account.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

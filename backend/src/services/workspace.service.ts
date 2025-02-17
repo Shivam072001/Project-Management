@@ -18,7 +18,7 @@ export const createWorkspaceService = async (
     name: string;
     description?: string | undefined;
   }
-) => {
+): Promise<unknown> => {
   const { name, description } = body;
 
   const user = await UserModel.findById(userId);
@@ -61,7 +61,7 @@ export const createWorkspaceService = async (
 //********************************
 // GET WORKSPACES USER IS A MEMBER
 //**************** **************/
-export const getAllWorkspacesUserIsMemberService = async (userId: string) => {
+export const getAllWorkspacesUserIsMemberService = async (userId: string): Promise<unknown> => {
   const memberships = await MemberModel.find({ userId })
     .populate("workspaceId")
     .select("-password")
@@ -73,7 +73,7 @@ export const getAllWorkspacesUserIsMemberService = async (userId: string) => {
   return { workspaces };
 };
 
-export const getWorkspaceByIdService = async (workspaceId: string) => {
+export const getWorkspaceByIdService = async (workspaceId: string): Promise<unknown> => {
   const workspace = await WorkspaceModel.findById(workspaceId);
 
   if (!workspace) {
@@ -98,7 +98,7 @@ export const getWorkspaceByIdService = async (workspaceId: string) => {
 // GET ALL MEMEBERS IN WORKSPACE
 //**************** **************/
 
-export const getWorkspaceMembersService = async (workspaceId: string) => {
+export const getWorkspaceMembersService = async (workspaceId: string): Promise<unknown> => {
   // Fetch all members of the workspace
 
   const members = await MemberModel.find({
@@ -107,14 +107,12 @@ export const getWorkspaceMembersService = async (workspaceId: string) => {
     .populate("userId", "name email profilePicture -password")
     .populate("role", "name");
 
-  const roles = await RoleModel.find({}, { name: 1, _id: 1 })
-    .select("-permission")
-    .lean();
+  const roles = await RoleModel.find({}, { name: 1, _id: 1 }).select("-permission").lean();
 
   return { members, roles };
 };
 
-export const getWorkspaceAnalyticsService = async (workspaceId: string) => {
+export const getWorkspaceAnalyticsService = async (workspaceId: string): Promise<unknown> => {
   const currentDate = new Date();
 
   const totalTasks = await TaskModel.countDocuments({
@@ -145,7 +143,7 @@ export const changeMemberRoleService = async (
   workspaceId: string,
   memberId: string,
   roleId: string
-) => {
+): Promise<unknown> => {
   const workspace = await WorkspaceModel.findById(workspaceId);
   if (!workspace) {
     throw new NotFoundException("Workspace not found");
@@ -180,7 +178,7 @@ export const updateWorkspaceByIdService = async (
   workspaceId: string,
   name: string,
   description?: string
-) => {
+): Promise<unknown> => {
   const workspace = await WorkspaceModel.findById(workspaceId);
   if (!workspace) {
     throw new NotFoundException("Workspace not found");
@@ -199,23 +197,19 @@ export const updateWorkspaceByIdService = async (
 export const deleteWorkspaceService = async (
   workspaceId: string,
   userId: string
-) => {
+): Promise<unknown> => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const workspace = await WorkspaceModel.findById(workspaceId).session(
-      session
-    );
+    const workspace = await WorkspaceModel.findById(workspaceId).session(session);
     if (!workspace) {
       throw new NotFoundException("Workspace not found");
     }
 
     // Check if the user owns the workspace
     if (workspace.owner.toString() !== userId) {
-      throw new BadRequestException(
-        "You are not authorized to delete this workspace"
-      );
+      throw new BadRequestException("You are not authorized to delete this workspace");
     }
 
     const user = await UserModel.findById(userId).session(session);
@@ -223,9 +217,7 @@ export const deleteWorkspaceService = async (
       throw new NotFoundException("User not found");
     }
 
-    await ProjectModel.deleteMany({ workspace: workspace._id }).session(
-      session
-    );
+    await ProjectModel.deleteMany({ workspace: workspace._id }).session(session);
     await TaskModel.deleteMany({ workspace: workspace._id }).session(session);
 
     await MemberModel.deleteMany({
@@ -234,13 +226,9 @@ export const deleteWorkspaceService = async (
 
     // Update the user's currentWorkspace if it matches the deleted workspace
     if (user?.currentWorkspace?.equals(workspaceId)) {
-      const memberWorkspace = await MemberModel.findOne({ userId }).session(
-        session
-      );
+      const memberWorkspace = await MemberModel.findOne({ userId }).session(session);
       // Update the user's currentWorkspace
-      user.currentWorkspace = memberWorkspace
-        ? memberWorkspace.workspaceId
-        : null;
+      user.currentWorkspace = memberWorkspace ? memberWorkspace.workspaceId : null;
 
       await user.save({ session });
     }

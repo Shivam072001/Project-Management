@@ -3,16 +3,12 @@ import { Roles } from "../enums/role.enum";
 import MemberModel from "../models/member.model";
 import RoleModel from "../models/roles-permission.model";
 import WorkspaceModel from "../models/workspace.model";
-import {
-  BadRequestException,
-  NotFoundException,
-  UnauthorizedException,
-} from "../utils/appError";
+import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
 
 export const getMemberRoleInWorkspace = async (
   userId: string,
   workspaceId: string
-) => {
+): Promise<unknown> => {
   const workspace = await WorkspaceModel.findById(workspaceId);
   if (!workspace) {
     throw new NotFoundException("Workspace not found");
@@ -38,7 +34,7 @@ export const getMemberRoleInWorkspace = async (
 export const joinWorkspaceByInviteService = async (
   userId: string,
   inviteCode: string
-) => {
+): Promise<unknown> => {
   // Find workspace by invite code
   const workspace = await WorkspaceModel.findOne({ inviteCode }).exec();
   if (!workspace) {
