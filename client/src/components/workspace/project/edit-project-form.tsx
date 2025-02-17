@@ -10,11 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../../ui/textarea";
@@ -23,16 +19,14 @@ import { ProjectType } from "@/types/api.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { editProjectMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
 
-export default function EditProjectForm(props: {
-  project?: ProjectType;
-  onClose: () => void;
-}) {
+export default function EditProjectForm(props: { project?: ProjectType; onClose: () => void }) {
   const { project, onClose } = props;
   const workspaceId = useWorkspaceId();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const [emoji, setEmoji] = useState("📊");
 
@@ -121,9 +115,7 @@ export default function EditProjectForm(props: {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Select Emoji
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Select Emoji</label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -144,9 +136,7 @@ export default function EditProjectForm(props: {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                      Project title
-                    </FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Project title</FormLabel>
                     <FormControl>
                       <Input placeholder="" className="!h-[48px]" {...field} />
                     </FormControl>
@@ -163,16 +153,10 @@ export default function EditProjectForm(props: {
                   <FormItem>
                     <FormLabel className="dark:text-[#f1f7feb5] text-sm">
                       Project description
-                      <span className="text-xs font-extralight ml-2">
-                        Optional
-                      </span>
+                      <span className="text-xs font-extralight ml-2">Optional</span>
                     </FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={4}
-                        placeholder="Projects description"
-                        {...field}
-                      />
+                      <Textarea rows={4} placeholder="Projects description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

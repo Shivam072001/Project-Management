@@ -4,13 +4,10 @@ import AccountModel from "../models/account.model";
 import WorkspaceModel from "../models/workspace.model";
 import RoleModel from "../models/roles-permission.model";
 import { Roles } from "../enums/role.enum";
-import {
-  BadRequestException,
-  NotFoundException,
-  UnauthorizedException,
-} from "../utils/appError";
+import { BadRequestException, NotFoundException, UnauthorizedException } from "../utils/appError";
 import MemberModel from "../models/member.model";
 import { ProviderEnum } from "../enums/account-provider.enum";
+import { logger } from "../utils/logger";
 
 export const loginOrCreateAccountService = async (data: {
   provider: string;
@@ -18,14 +15,14 @@ export const loginOrCreateAccountService = async (data: {
   providerId: string;
   picture?: string;
   email?: string;
-}) => {
+}): Promise<unknown> => {
   const { providerId, provider, displayName, email, picture } = data;
 
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
-    console.log("Started Session...");
+    logger.info("Started Session...");
 
     let user = await UserModel.findOne({ email }).session(session);
 
@@ -74,7 +71,7 @@ export const loginOrCreateAccountService = async (data: {
     }
     await session.commitTransaction();
     session.endSession();
-    console.log("End Session...");
+    logger.info("End Session...");
 
     return { user };
   } catch (error) {
@@ -90,7 +87,7 @@ export const registerUserService = async (body: {
   email: string;
   name: string;
   password: string;
-}) => {
+}): Promise<unknown> => {
   const { email, name, password } = body;
   const session = await mongoose.startSession();
 
@@ -145,7 +142,7 @@ export const registerUserService = async (body: {
 
     await session.commitTransaction();
     session.endSession();
-    console.log("End Session...");
+    logger.info("End Session...");
 
     return {
       userId: user._id,
@@ -167,7 +164,7 @@ export const verifyUserService = async ({
   email: string;
   password: string;
   provider?: string;
-}) => {
+}): Promise<unknown> => {
   const account = await AccountModel.findOne({ provider, providerId: email });
   if (!account) {
     throw new NotFoundException("Invalid email or password");

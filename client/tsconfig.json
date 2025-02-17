@@ -5,9 +5,39 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@context/*": ["./src/context/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@pages/*": ["./src/page/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@types/*": ["./src/types/*"],
+      "@layout/*": ["./src/layout/*"],
+      "@constant/*": ["./src/constant/*"]
     }
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

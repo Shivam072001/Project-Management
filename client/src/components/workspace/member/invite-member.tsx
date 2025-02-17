@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthContext } from "@/context/auth-provider";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CheckIcon, CopyIcon, Loader } from "lucide-react";
 import { BASE_ROUTE } from "@/routes/common/routePaths";
 import PermissionsGuard from "@/components/resuable/permission-guard";
@@ -12,11 +12,12 @@ import { Permissions } from "@/constant";
 const InviteMember = () => {
   const { workspace, workspaceLoading } = useAuthContext();
   const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   const inviteUrl = workspace
     ? `${window.location.origin}${BASE_ROUTE.INVITE_URL.replace(
         ":inviteCode",
-        workspace.inviteCode
+        workspace.inviteCode,
       )}`
     : "";
 
@@ -35,12 +36,10 @@ const InviteMember = () => {
   };
   return (
     <div className="flex flex-col pt-0.5 px-0 ">
-      <h5 className="text-lg  leading-[30px] font-semibold mb-1">
-        Invite members to join you
-      </h5>
+      <h5 className="text-lg  leading-[30px] font-semibold mb-1">Invite members to join you</h5>
       <p className="text-sm text-muted-foreground leading-tight">
-        Anyone with an invite link can join this free Workspace. You can also
-        disable and create a new invite link for this Workspace at any time.
+        Anyone with an invite link can join this free Workspace. You can also disable and create a
+        new invite link for this Workspace at any time.
       </p>
 
       <PermissionsGuard showMessage requiredPermission={Permissions.ADD_MEMBER}>
@@ -63,12 +62,7 @@ const InviteMember = () => {
               value={inviteUrl}
               readOnly
             />
-            <Button
-              disabled={false}
-              className="shrink-0"
-              size="icon"
-              onClick={handleCopy}
-            >
+            <Button disabled={false} className="shrink-0" size="icon" onClick={handleCopy}>
               {copied ? <CheckIcon /> : <CopyIcon />}
             </Button>
           </div>

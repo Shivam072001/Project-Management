@@ -3,6 +3,7 @@ import React from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { customEmojis } from "./custom-emojis";
+import { logger } from "@/lib/logger";
 
 interface EmojiPickerComponentProps {
   onSelectEmoji: (emoji: string) => void;
@@ -13,7 +14,7 @@ const EmojiPickerComponent: React.FC<EmojiPickerComponentProps> = ({
 }) => {
   // Handle emoji selection
   const handleEmojiSelect = (emoji: { native: string }) => {
-    console.log(emoji, "emoji");
+    logger.info("emoji", emoji.native);
     onSelectEmoji(emoji.native); // Pass the selected emoji to parent component
   };
 

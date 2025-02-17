@@ -42,7 +42,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+          {description && <DialogDescription className="sr-only">{description}</DialogDescription>}
         </DialogHeader>
         {children && <div className="py-4">{children}</div>}
         <DialogFooter>
