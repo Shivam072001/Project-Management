@@ -46,6 +46,16 @@ app.use(
   })
 );
 
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  logger.debug("Incoming request:", {
+    method: req.method,
+    url: req.originalUrl,
+    origin: req.headers.origin || "No origin",
+    cookies: req.cookies || "No cookies",
+  });
+  next();
+});
+
 app.get(
   `/`,
   asyncHandler(async (_req: Request, res: Response) => {

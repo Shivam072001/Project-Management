@@ -5,7 +5,6 @@ import { registerSchema } from "../validation/auth.validation";
 import { HTTPSTATUS } from "../config/http.config";
 import { registerUserService } from "../services/auth.service";
 import passport from "passport";
-import { logger } from "../utils/logger";
 
 export const googleLoginCallback = asyncHandler(async (req: Request, res: Response) => {
   const currentWorkspace = req.user?.currentWorkspace;
@@ -60,15 +59,11 @@ export const loginController = asyncHandler(
 );
 
 export const logOutController = asyncHandler(async (req: Request, res: Response) => {
-  await new Promise<void>((resolve, reject) => {
-    req.logout((err) => {
-      if (err) {
-        logger.error("Logout error:", err);
-        reject(err);
-        return;
-      }
-      resolve();
-    });
+  req.logout((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.status(HTTPSTATUS.INTERNAL_SERVER_ERROR).json({ error: "Failed to log out" });
+    }
   });
 
   req.session = null;
