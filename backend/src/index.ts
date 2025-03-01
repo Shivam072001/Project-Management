@@ -50,10 +50,11 @@ app.use(
 
 app.get(
   `/`,
-  asyncHandler(async (_req: Request, _res: Response, _next: NextFunction) => {
-    throw new BadRequestException("This is a bad request", ErrorCodeEnum.AUTH_INVALID_TOKEN);
+  asyncHandler(async (_req: Request, res: Response) => {
+    res.status(200).json({ message: "Server is running!" });
   })
 );
+
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes);
