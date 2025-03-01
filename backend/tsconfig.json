@@ -19,7 +19,7 @@
     /* 🔍 Type Checking */
     "strict": false,                      // Enable all strict type-checking options
     "noImplicitAny": false,               // Disallow implicit 'any' types
-    "strictNullChecks": false,            // Prevent null/undefined errors
+    "strictNullChecks": true,            // Prevent null/undefined errors
     "strictFunctionTypes": false,         // Enforce correct function parameter types
     "strictBindCallApply": false,         // Ensures 'bind', 'call', and 'apply' have correct arguments
     "strictPropertyInitialization": false, // Prevent uninitialized class properties
