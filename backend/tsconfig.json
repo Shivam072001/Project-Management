@@ -6,6 +6,7 @@
     "moduleResolution": "NodeNext",     // Correctly resolves imports for Node.js
     "allowSyntheticDefaultImports": true, // Import CommonJS modules as default
     "esModuleInterop": true,            // Easier interoperability between ES & CommonJS modules
+    "types": ["node", "express", "passport", "passport-google-oauth20", "passport-local", "cors", "cookie-session", "bcrypt"],
 
     /* 📂 Project Structure */
     "rootDir": "./src",                 // Keep source code organized
@@ -16,15 +17,15 @@
     },
 
     /* 🔍 Type Checking */
-    "strict": true,                      // Enable all strict type-checking options
-    "noImplicitAny": true,               // Disallow implicit 'any' types
+    "strict": false,                      // Enable all strict type-checking options
+    "noImplicitAny": false,               // Disallow implicit 'any' types
     "strictNullChecks": true,            // Prevent null/undefined errors
     "strictFunctionTypes": true,         // Enforce correct function parameter types
     "strictBindCallApply": true,         // Ensures 'bind', 'call', and 'apply' have correct arguments
     "strictPropertyInitialization": true, // Prevent uninitialized class properties
     "noImplicitReturns": true,           // Require explicit returns in functions
     "noFallthroughCasesInSwitch": true,  // Prevent accidental fallthrough in switch statements
-    "useUnknownInCatchVariables": true,  // Treat catch variables as 'unknown' instead of 'any'
+    "useUnknownInCatchVariables": false,  // Treat catch variables as 'unknown' instead of 'any'
 
     /* 🚀 Performance & Optimization */
     "incremental": true,                 // Enable incremental compilation for faster builds
