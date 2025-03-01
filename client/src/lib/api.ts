@@ -24,6 +24,7 @@ import {
   WorkspaceByIdResponseType,
   EditWorkspaceType,
 } from "@/types/api.type";
+import { config } from "@/config/app.config";
 
 export const loginMutationFn = async (
   data: loginType
@@ -38,9 +39,16 @@ export const registerMutationFn = async (data: registerType) =>
 export const logoutMutationFn = async () => await API.post("/auth/logout");
 
 export const getCurrentUserQueryFn =
-  async (): Promise<CurrentUserResponseType> => {
+  async (): Promise<CurrentUserResponseType | null> => {
+    try {
     const response = await API.get(`/user/current`);
     return response.data;
+    } catch {
+      if (config.NODE_ENV !== "development") {
+        throw new Error("Failed to fetch user data");
+      }
+      return null;
+    }
   };
 
 //********* WORKSPACE ****************
