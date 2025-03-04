@@ -46,15 +46,13 @@ app.use(
   })
 );
 
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  logger.debug("Incoming request:", {
-    method: req.method,
-    url: req.originalUrl,
-    origin: req.headers.origin || "No origin",
-    cookies: req.cookies || "No cookies",
-  });
+app.use((req, _res, next) => {
+  console.log("Session:", req.session);
+  console.log("User:", req.user);
+  console.log("Cookies:", req.cookies);
   next();
 });
+
 
 app.get(
   `/`,
